@@ -88,6 +88,7 @@ void main()
 	STRING* strSrcPath;
 	STRING* strTgtPath;
 	STRING* strFile;
+	STRING* strParam = str_create("-cfg ");
 
 	video_screen = 0; /* do not open engine window */	
 
@@ -124,7 +125,8 @@ void main()
 		 * tries to call the binary
 		 */
 		strConfig = config_getFilename();
-		exec("a3convmap.exe", strConfig);
+		str_cat (strParam, strConfig);
+		exec("a3convmap.exe", strParam);
 	}
 	else
 	{
@@ -136,6 +138,7 @@ void main()
 
 	parser_cleanup();
 	config_unload();
+	ptr_remove (strParam);
 	
 	wait(1);
 	sys_exit("");

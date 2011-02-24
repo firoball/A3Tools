@@ -782,10 +782,19 @@ void make_copyWallMesh(REGIONMESH* psData, WMPWALL* psWall, var* vUVBuf, var vVe
 	else
 		vOffsetX = psWall->psWall->vOffsetX % vPixelX; /* offset from script - always positive */
 
-	if (psWall->psWall->vOffsetY == 0) /* only use WED Y offset when no explicit offset was defined in script */
-		vOffsetY = psWall->vOffsetY; /* offset from WED - can also be negative */
+	/* ignore y offset for portcullis walls */
+	if (psWall->psWall->lFlags & A3_PORTCULLIS || psWall->psWall->lFlags & A3_FENCE)
+	{
+		vOffsetY = 0;
+	}
 	else
-		vOffsetY = psWall->psWall->vOffsetY; /* offset from script - can also be negative */
+	{
+		if (psWall->psWall->vOffsetY == 0) /* only use WED Y offset when no explicit offset was defined in script */
+			vOffsetY = psWall->vOffsetY; /* offset from WED - can also be negative */
+		else
+			vOffsetY = psWall->psWall->vOffsetY; /* offset from script - can also be negative */
+	}
+	
 	vOffsetX /= psTex->vScaleX;
 	vOffsetY /= psTex->vScaleY;
 	
