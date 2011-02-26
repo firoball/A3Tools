@@ -40,3 +40,19 @@ Many level areas with sky textures may get slow in the
 map converter, but run just fine when using the WM3
 loader utility script.
 
+
+Controls
+--------
+
+F5: change resolution
+ESC: exit
+WASD/arrow keys/Maus: move camera
+PGUP/PGDN: tilt camera
+POS1/END: adjust camera height
+0: lock/unlock camera movement
+
+Some demos only show a blue colored screen after start.
+The reason is, that the original level was built further
+away from the coordiante center.
+Use arrow keys to turn around and locate the level,
+then move towards it to see more.
