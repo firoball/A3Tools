@@ -120,7 +120,7 @@ void main()
 		pal_copy(strSrcPath, strTgtPath);
 
 		/* 
-		 * now execture the real conversion process
+		 * now execute the real conversion process
 		 * This however will only work in compiled mode since it
 		 * tries to call the binary
 		 */

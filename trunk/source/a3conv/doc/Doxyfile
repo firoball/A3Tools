@@ -310,8 +310,8 @@ SYMBOL_CACHE_SIZE      = 0
 # Private class members and static file members will be hidden unless
 # the EXTRACT_PRIVATE and EXTRACT_STATIC tags are set to YES
 
-EXTRACT_ALL            = NO
-#EXTRACT_ALL            = YES
+#EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 
 # If the EXTRACT_PRIVATE tag is set to YES all private members of a class
 # will be included in the documentation.
@@ -887,7 +887,7 @@ GENERATE_HTMLHELP      = YES
 # can add a path in front of the file if the result should not be
 # written to the html output directory.
 
-CHM_FILE               =
+CHM_FILE               = ../A3converter.chm
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can
 # be used to specify the location (absolute path including file name) of

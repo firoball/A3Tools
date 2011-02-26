@@ -8,5 +8,3 @@
 c:\programme\doxygen\bin\doxygen.exe Doxyfile 2>>error.log
 "c:\programme\HTML Help Workshop\hhc.exe" html\index.hhp 2>>error.log
 
-@REM do not modify this part
-@move html\index.chm index.chm
