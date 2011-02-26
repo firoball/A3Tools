@@ -75,7 +75,7 @@ var face_checkDegenerated(var* vVertexBuf, int* iTriangleBuf, var vTriIdx, VECTO
 		vDegenerated = 0;
 	}
 
-	/* since it does not work proprely anyway, just check whethr normal = 0... */
+	/* since it does not work properly anyway, just check whether normal = 0... */
 #ifdef former_degeneration_check
 	/* check if area of triangle is 0.
 	 * The forumla actually does not deliver the real area, but since only
