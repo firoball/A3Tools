@@ -1,0 +1,51 @@
+Read this if you play MASSACRE the first time.
+
+___________________
+*The main controls*
+
+After starting the game, choose OPTIONS if you want to change the settings.
+With the ESC-key you can return to the Main Menu. Then choose NEW GAME.
+
+You'll find yourself in a dark forest, without any items or weapons.
+Use the arrow keys to move, A (middle mouse button x2)to jump and Z (=Y on German keyboards)
+(middle mouse button x1) to duck.
+
+Now go to the sword that is lying on the ground before you. When collecting it you'll
+hear a short sound. Press F6 to open the Backpack. The sword should be already selected.
+With PGUP and PGDN you can scroll through your backpack. To equip an item or to put it into
+the Inventory in the status bar, press HOME. The sword should appear on the right side of
+your screen. Use the CTRL-key (or left mouse-button) to attack.
+Now walk around the corner. You'll see a ghost from behind. Hold down the SHIFT-key and
+sneak to it until you're near enough to hit it. Sometimes it will notice you, but most
+times it won't...ghosts are stupid. Then attack. The ghost will flee and then start an
+attack on you. Hit it before it hits you and the ghost will flee again. It should be no
+problem for you to kill those ghosts.
+You'll come to a hollow tree soon. Jump over it and collect the yellow potion hidden in the
+corner. To use it, open the Backpack using F6, then select it and press ENTER. If you don't
+need it or if you have any reason to drop it, use D. But be careful. You can also drop your
+weapon or important items. If an item is dropped it is GONE, so use this feature with care!
+
+If you want to activate doors, switches, or just read signs, use the SPACE bar or the
+right mouse button.
+
+Now you should be able to play the game. I didn't mention every key in this small tutorial,
+but I don't wanna take you the fun discovering some other things.
+If you have any problems while playing, just press the F1-key and you'll get a listing of
+all keys used in the game.
+________________
+*Hints and Tips*
+
+~Ghosts are weak, but prepare for stronger monsters!
+
+~Armor is god! Try to find one as soon as possible.
+
+~There are no secret doors or something similar. So just walk through the forest carefully.
+
+~You can find 3 weapons in the game. Two are on your way, but where's the third one?
+
+~Never forget that you have a certain mana value. What can you do with mana?
+
+~Sometimes you'll hear a YEAH! What happened?
+
+_________________
+12/31/98 Firoball
