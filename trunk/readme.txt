@@ -30,16 +30,16 @@ Folder Structure
 ----------------
 
 A3GAMES    - contains original A3 games/demos
-|-skaphander (Skaphander Demo)
-|-tlol       (The Lord of Lightning)
-|-vrdemo     (Virtual Reality Demo)
-|-wok        (World of Kandoria Contest Version)
+|-SKAPHANDER (Skaphander Demo)
+|-TLOL       (The Lord of Lightning)
+|-VRDEMO     (Virtual Reality Demo)
+|-WOK        (World of Kandoria Contest Version)
 BINARY     - contains all executables
 |-WM3SAMPLE - samples for preconverted A3 levels
 |-A3CONV   - sample configurations for A3 WMP Converter
 DUMP       - empty folder, can be used for own map conversions
 PRECONVERTED
-|-WOK      - precovnerted version of World of Kandoria (used for WM3sample)
+|-WOK      - preconverted version of World of Kandoria (used for WM3sample)
 SOURCE     - source code (Lite-C)
 |-A3CONV   - source for converting A3 WMP/WDL to .WM3
 |-HELPERS  - some dirty little helpers for various things. Not directly used
