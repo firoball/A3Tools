@@ -41,7 +41,7 @@ long lCurrentPalette[256];
 /* ----- FUNCTIONS ----- */
 
 
-void pal_create(STRING* strSrcPath, STRING* strTgtPath, STRING* strFile)
+var pal_create(STRING* strSrcPath, STRING* strTgtPath, STRING* strFile)
 {
 
 	var vHandle;
@@ -105,6 +105,8 @@ void pal_create(STRING* strSrcPath, STRING* strTgtPath, STRING* strFile)
 	
 	ptr_remove(strTgtFile);
 	ptr_remove(strSrcFile);
+
+	return vFail;
 }
 
 void pal_writeRaw(STRING* strFile)

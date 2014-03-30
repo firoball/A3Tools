@@ -39,8 +39,10 @@ typedef struct
 	STRING* strWdlFile; /*!< main WDL script of A3 game */
 	STRING* strWmpFile; /*!< WMP level file of A3 game */
 	STRING* strWm3File; /*!< target file for WM3 export */
+	STRING* strPalette; /*!< optional - use custom color palette */
 	var vMeshScale;     /*!< scale factor for exported level mesh (default: 5) */
 	var vExportWm3;     /*!< 0: do not export WM3 - 1: export WM3*/
+	var vCustomPalette; /*!< 0: search palette in script - 1: use custom palette*/
 }CONFIG;
 
 

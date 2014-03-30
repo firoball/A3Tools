@@ -59,14 +59,21 @@
 /* ----- FUNCTIONS ----- */
 
 
-void pal_copy(STRING* strSrcPath, STRING* strTgtPath)
+void pal_copy(STRING* strSrcPath, STRING* strTgtPath, STRING* strPalette)
 {
-	STRING* strPalette;
+	var vFail = 0;
 	STRING* strPathFileOut = str_create("");
-	
-	/* first copy palette */
-	strPalette = parser_getPalette();
-	pal_create(strSrcPath, strTgtPath, strPalette);
+	/* first get palette */
+	vFail = pal_create(strSrcPath, strTgtPath, strPalette);
+	if(vFail != 0)
+	{
+		#ifdef SYSMSG_ACTIVE
+		STRING* strParseMsg = str_create("");
+		str_printf(strParseMsg, "ERROR: could not create palette from %s", strPalette->chars);
+		SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+		ptr_remove(strParseMsg);
+		#endif
+	}
 
 	/* copy palette to root dir - engine needs it there */
 	str_cpy(strPathFileOut, strTgtPath);
@@ -83,12 +90,14 @@ void pal_copy(STRING* strSrcPath, STRING* strTgtPath)
 void main()
 {
 	var vFail = 0;
+	var vCustomPalette;
 	STRING* strConfig;
 	CONFIG* psConfig;
 	STRING* strSrcPath;
 	STRING* strTgtPath;
 	STRING* strFile;
 	STRING* strParam = str_create("-cfg ");
+	STRING* strPalette;
 
 	video_screen = 0; /* do not open engine window */	
 
@@ -100,24 +109,40 @@ void main()
 	strSrcPath = psConfig->strSrcPath;
 	strTgtPath = psConfig->strTgtPath;
 	strFile = psConfig->strWdlFile;
+	vCustomPalette = psConfig->vCustomPalette;
 
 	SYSMSG_create();
-	SYSMSG_logToFile(ON);
+	SYSMSG_logToFile(ON, "palette.log");
 	SYSMSG_hide();
 	SYSMSG_print(SYSMSG_SYSTEM, "start conversion...");
 
 	
+	/* do not parse when custom palette was found in config */
 	if (vFail == 0)
 	{
-		vFail += extract(strSrcPath, strTgtPath, strFile);
-		wait(3);
-		vFail += parse(strSrcPath, strTgtPath, strFile);
-		wait(3);
+		if (vCustomPalette == 0)
+		{
+			vFail += extract(strSrcPath, strTgtPath, strFile);
+			wait(3);
+			vFail += parse(strSrcPath, strTgtPath, strFile);
+			wait(3);
+			strPalette = parser_getPalette();
+		}
+		else
+		{
+			strPalette = psConfig->strPalette;
+			#ifdef SYSMSG_ACTIVE
+			STRING* strParseMsg = str_create("");
+			str_printf(strParseMsg, "Custom palette definition found: %s", strPalette->chars);
+			SYSMSG_print(SYSMSG_SYSTEM, strParseMsg);
+			ptr_remove(strParseMsg);
+			#endif
+		}
 	}
 
 	if (vFail == 0)
 	{
-		pal_copy(strSrcPath, strTgtPath);
+		pal_copy(strSrcPath, strTgtPath, strPalette);
 
 		/* 
 		 * now execute the real conversion process

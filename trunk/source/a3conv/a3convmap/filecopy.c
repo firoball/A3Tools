@@ -31,7 +31,7 @@
 #include <acknex.h>
 #include <strio.c>
 #include "parser.h"
-#include "makepal.h"
+//#include "makepal.h"
 #include "lbm2bmp.h"
 
 
@@ -59,16 +59,17 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 	STRING* strPathFileIn = str_create("");
 	STRING* strPathFileOut = str_create("");
 	STRING* strParseMsg = str_create("");
-	STRING* strPalette;
+	//STRING* strPalette;
 	STRING* strScaledFile;
 
 	#ifdef SYSMSG_ACTIVE
 	SYSMSG_print(SYSMSG_SYSTEM, "copy bitmaps started...");
 	#endif
 
+#ifdef DONE_BY_A3CONV
 	/* first copy palette */
-	strPalette = parser_getPalette();
-	pal_create(strSrcPath, strTgtPath, strPalette);
+	//strPalette = parser_getPalette(); --done by a3conv
+	//pal_create(strSrcPath, strTgtPath, strPalette); --done by a3conv
 
 	/* copy palette to root dir - engine needs it there */
 	str_cpy(strPathFileOut, strTgtPath);
@@ -76,10 +77,12 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 	if(!file_cpy("palette.raw", strPathFileOut))
 	{
 		#ifdef SYSMSG_ACTIVE
-		str_printf(strParseMsg, "WARNING: copy of %s failed", strPalette->chars);
-		SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+		//str_printf(strParseMsg, "WARNING: copy of %s failed", strPalette->chars);
+		//SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+		SYSMSG_print(SYSMSG_ERROR, "WARNING: copy of palette.raw failed");
 		#endif
 	}
+#endif
 
 	n = getNumBmap();
 	for (i = 0; i < n; i++)
