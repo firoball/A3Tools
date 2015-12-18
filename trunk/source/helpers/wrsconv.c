@@ -1,5 +1,20 @@
 #include <acknex.h>
 #include <default.c>
+#include "unpack.h"
+
+#define PRAGMA_POINTER
+
+#define SYSMSG_vBufferSize 50
+#define LIST_ARRAY_STEPS   200
+
+#define PRAGMA_PATH "..\\shared\\toolbox"
+#define PRAGMA_PATH "..\\shared"
+#define PRAGMA_PATH "shared"
+
+#define TOOLBOX_USE_SYSMSG
+#define TOOLBOX_USE_LIST
+#include "toolbox.h"
+
 
 /* converts A3 WRS to A5 WRS
  * quick and dirty, but good. 
@@ -13,117 +28,10 @@
  
 #define EOF -1
 
-STRING* strSrcPath = "E:\\a3games\\opdemo3_src\\demo3.wrs";
-STRING* strTgtPath = "E:\\a3games\\opdemo3_src\\demo3_a5.wrs";
+STRING* strSrcPath = "E:\\a3games\\opdemo3_src2\\demo3.wrs";
+STRING* strTgtPath = "E:\\a3games\\opdemo3_src2\\";
+STRING* strFile = "demo3_a5.wrs";
 
-int iNameConv[256];
-
-void lookup_init()
-{
-	/* nullify everything */
-	memset(iNameConv, 0x0, sizeof(int) * 256);
-	
-	/* there certainly IS some logic inside... but.. lookup tables ftw! */
-	iNameConv['a'] = 0xC4;
-	iNameConv['b'] = 0xC7;
-	iNameConv['c'] = 0xC6;
-	iNameConv['d'] = 0xC1;
-	iNameConv['e'] = 0xC0;
-	iNameConv['f'] = 0xC3;
-	iNameConv['g'] = 0xC2;
-	iNameConv['h'] = 0xCD;
-	iNameConv['i'] = 0xCC;
-	iNameConv['j'] = 0xCF;
-	iNameConv['k'] = 0xCE;
-	iNameConv['l'] = 0xC9;
-	iNameConv['m'] = 0xC8;
-	iNameConv['n'] = 0xCB;
-	iNameConv['o'] = 0xCA;
-	iNameConv['p'] = 0xD5;
-	iNameConv['q'] = 0xD4;
-	iNameConv['r'] = 0xD7;
-	iNameConv['s'] = 0xD6;
-	iNameConv['t'] = 0xD1;
-	iNameConv['u'] = 0xD0;
-	iNameConv['v'] = 0xD3;
-	iNameConv['w'] = 0xD2;
-	iNameConv['x'] = 0xDD;
-	iNameConv['y'] = 0xDC;
-	iNameConv['z'] = 0xDF;
-	
-	iNameConv['A'] = 0xC4;
-	iNameConv['B'] = 0xC7;
-	iNameConv['C'] = 0xC6;
-	iNameConv['D'] = 0xC1;
-	iNameConv['E'] = 0xC0;
-	iNameConv['F'] = 0xC3;
-	iNameConv['G'] = 0xC2;
-	iNameConv['H'] = 0xCD;
-	iNameConv['I'] = 0xCC;
-	iNameConv['J'] = 0xCF;
-	iNameConv['K'] = 0xCE;
-	iNameConv['L'] = 0xC9;
-	iNameConv['M'] = 0xC8;
-	iNameConv['N'] = 0xCB;
-	iNameConv['O'] = 0xCA;
-	iNameConv['P'] = 0xD5;
-	iNameConv['Q'] = 0xD4;
-	iNameConv['R'] = 0xD7;
-	iNameConv['S'] = 0xD6;
-	iNameConv['T'] = 0xD1;
-	iNameConv['U'] = 0xD0;
-	iNameConv['V'] = 0xD3;
-	iNameConv['W'] = 0xD2;
-	iNameConv['X'] = 0xDD;
-	iNameConv['Y'] = 0xDC;
-	iNameConv['Z'] = 0xDF;
-	
-	/* something seems to be wrong here... use small letters instead
-	iNameConv['A'] = 0xE4;
-	iNameConv['B'] = 0xE7;
-	iNameConv['C'] = 0xE6;
-	iNameConv['D'] = 0xE1;
-	iNameConv['E'] = 0xE0;
-	iNameConv['F'] = 0xE3;
-	iNameConv['G'] = 0xE2;
-	iNameConv['H'] = 0xED;
-	iNameConv['I'] = 0xEC;
-	iNameConv['J'] = 0xEF;
-	iNameConv['K'] = 0xEE;
-	iNameConv['L'] = 0xE9;
-	iNameConv['M'] = 0xE8;
-	iNameConv['N'] = 0xFB;
-	iNameConv['O'] = 0xFA;
-	iNameConv['P'] = 0xF5;
-	iNameConv['Q'] = 0xF4;
-	iNameConv['R'] = 0xF7;
-	iNameConv['S'] = 0xF6;
-	iNameConv['T'] = 0xF1;
-	iNameConv['U'] = 0xF0;
-	iNameConv['V'] = 0xF3;
-	iNameConv['W'] = 0xF2;
-	iNameConv['X'] = 0xFD;
-	iNameConv['Y'] = 0xFC;
-	iNameConv['Z'] = 0xFF;
-	*/
-	
-	iNameConv['.'] = 0x8B;
-	iNameConv['+'] = 0x8E;
-	iNameConv['_'] = 0xFA;
-	iNameConv['\\'] = 0xE9;
-	iNameConv[']'] = 0xE8;
-	
-	iNameConv['0'] = 0x95;
-	iNameConv['1'] = 0x94;
-	iNameConv['2'] = 0x97;
-	iNameConv['3'] = 0x96;
-	iNameConv['4'] = 0x91;
-	iNameConv['5'] = 0x90;
-	iNameConv['6'] = 0x93;
-	iNameConv['7'] = 0x92;
-	iNameConv['8'] = 0x9D;
-	iNameConv['9'] = 0x9C;
-}
 
 
 void main()
@@ -132,10 +40,25 @@ void main()
 	long i;
 	long l;
 	long s;
-	
-	var vHandleR = file_open_read(strSrcPath);
-	var vHandleW = file_open_write(strTgtPath);
+	var vExt;
 
+	long lNumFiles = 0;
+	STRING* strTgtPathFile = str_create("");
+	str_cpy(strTgtPathFile, strTgtPath);
+	str_cat(strTgtPathFile, strFile);
+	var vHandleR = file_open_read(strSrcPath);
+	var vHandleW = file_open_write(strTgtPathFile);
+	STRING* strParseMsg = str_create("");
+	char cResourceFile[14];
+
+	SYSMSG_create();
+	SYSMSG_logToFile(ON, "wrsconv.log");
+	SYSMSG_hide();
+	SYSMSG_print(SYSMSG_SYSTEM, "start conversion...");
+	cResourceFile[13] = '\0'; /* null terminated string */
+
+	LIST* pFileList = LIST_create();
+	
 	wait(1);
 	if (vHandleR)
 	{
@@ -155,19 +78,56 @@ void main()
 			do
 			{
 				/* read file info */
+				vExt = 0; /* extension not yet found */
 				for (i = 0; i < 13; i++)
 				{
 					x = get8(vHandleR);
 					if (x != EOF)
 					{
-//						printf("%c", x&0xFF);
-						x = iNameConv[(x & 0xFF)]; /* decrypt filename */
+						cResourceFile[i] = (char)x;
+							
+						switch (vExt)
+						{
+							/* patch 'pak' extension to resource file */
+							case 1:
+								x = iNameConv['p'];
+								vExt++;
+								break;
+								
+							case 2:
+								x = iNameConv['a'];
+								vExt++;
+								break;
+								
+							case 3:
+								x = iNameConv['k'];
+								vExt++;
+								break;
+
+							/* any letter before file extension is handled here */
+							default:
+								if (((char)x) == '.')
+									vExt = 1; /* extension found */
+								x = iNameConv[(x & 0xFF)]; /* decrypt filename */
+								break;
+								
+						}
 						put8(vHandleW, x);
+					}
+					else
+					{
+						cResourceFile[i] = '\0';
 					}
 				}
 
 				if (x != EOF)
 				{
+					#ifdef SYSMSG_ACTIVE
+					str_printf(strParseMsg, "File found: %s", cResourceFile);
+					SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+					#endif
+					LIST_append(pFileList, str_create(cResourceFile));
+
 					/* file length is 32 byte for A5 - put zeros */
 					for (i = 0; i < 19; i++)
 						put8(vHandleW, 0);
@@ -187,22 +147,54 @@ void main()
 						x = get8(vHandleR);
 						put8(vHandleW, x);
 					}
+					
+					/* file counter */
+					lNumFiles++;
 				}					
 			}while(x != EOF);
 			
 			file_close(vHandleW);
+			#ifdef SYSMSG_ACTIVE
+			str_printf(strParseMsg, "%d resource files found.", lNumFiles);
+			SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+			#endif
 		}
 		else
 		{
-			error("Could not create target");
+			#ifdef SYSMSG_ACTIVE
+			str_printf(strParseMsg, "Error: Could not write to target %s", strTgtPath->chars);
+			SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+			#endif
 		}
 		file_close(vHandleR);
 	}
 	else
 	{
-		error("Could not read from soruce");
+		#ifdef SYSMSG_ACTIVE
+		str_printf(strParseMsg, "Error: Could not read source %s", strSrcPath->chars);
+		SYSMSG_print(SYSMSG_ERROR, strParseMsg);
+		#endif
 	}
 
-	printf("done.");
+	SYSMSG_print(SYSMSG_SYSTEM, "conversion done.\r\n");
+
+unpack_resource(strTgtPath, strFile, pFileList);
+
+	SYSMSG_remove();
+	ptr_remove(strParseMsg);
+
+	/* clean up */
+	int iListCount = LIST_items(pFileList);
+	STRING* strListContent;
+	for (i = 0; i < iListCount; i++)
+	{
+		strListContent = (STRING*)LIST_getItem(pFileList, i);
+		//error(strListContent);
+		ptr_remove(strListContent);
+	}
+	LIST_remove(pFileList);
+
+//	printf("done.");
 	sys_exit("");
 }
+

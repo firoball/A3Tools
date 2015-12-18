@@ -91,9 +91,11 @@ var config_read()
 	sConfig.strWdlFile = str_create("");
 	sConfig.strWmpFile = str_create("");
 	sConfig.strWm3File = str_create("");
+	sConfig.strWrsFile = str_create("");
 	sConfig.strPalette = str_create("");
 	sConfig.vExportWm3 = 0;
 	sConfig.vMeshScale = 5;
+	sConfig.vConvertWrs = 0;
 	sConfig.vCustomPalette = 0;
 	
 	if (strConfig != NULL)
@@ -137,6 +139,13 @@ var config_read()
 			sConfig.vExportWm3 = 1;
 		}
 		
+		/* wrs filename */
+		if (CONFIG_searchString(vHandle, "resource", strTemp))
+		{
+			str_cpy(sConfig.strWrsFile, strTemp);
+			sConfig.vConvertWrs = 1;
+		}
+		
 		/* palette filename */
 		if (CONFIG_searchString(vHandle, "palette", strTemp))
 		{
@@ -170,6 +179,7 @@ void config_unload()
 	ptr_remove(sConfig.strWdlFile);
 	ptr_remove(sConfig.strWmpFile);
 	ptr_remove(sConfig.strWm3File);
+	ptr_remove(sConfig.strWrsFile);
 	ptr_remove(sConfig.strPalette);
 }
 
