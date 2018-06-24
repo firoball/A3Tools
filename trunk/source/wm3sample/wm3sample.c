@@ -5,6 +5,7 @@
 #define PRAGMA_PATH "..\\shared\\a3sky"
 #define PRAGMA_PATH "..\\shared"
 
+#define WM3_DEBUG
 #include "wm3load.h"
 
 
@@ -24,16 +25,16 @@
 void main(void)
 {
 	/* wok - preconverted */
-	STRING* strFile = str_create("..\\..\\preconverted\\wok\\forest3.wm3");
+	//STRING* strFile = str_create("..\\..\\preconverted\\wok\\forest3.wm3");
 
 	/* you may use these lcoation strings if you convert to the predefined folders */	
 	//STRING* strFile = str_create("..\\..\\dump\\tlol\\tlol.wm3");
 	//STRING* strFile = str_create("..\\..\\dump\\wok\\forest3.wm3");
-	//STRING* strFile = str_create("..\\..\\dump\\skaphander\\skaph.wm3");
+	STRING* strFile = str_create("..\\..\\dump\\skaphander\\skaph.wm3");
 	//STRING* strFile = str_create("..\\..\\dump\\vrdemo\\vrdemo.wm3");
 
-
 	level_load(""); /* load empty level */
+	wait(1);
 	WM3_load(strFile);
 	ptr_remove(strFile);
 

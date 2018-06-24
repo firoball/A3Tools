@@ -17,7 +17,6 @@ long WM3_lNumMesh;
 long WM3_lNumObject;
 
 #define HAS_SCRIPT FLAG8
-#define WM3_DEBUG
 
 void WM3_load(STRING* strTemp)
 {
@@ -81,6 +80,7 @@ void WM3_load(STRING* strTemp)
 		file_close(WM3_vHandle);
 		
 		/* now reset all dynamic flags */
+		wait(1);
 		WM3_resetDynamic();
 	}
 	else
@@ -391,6 +391,9 @@ var WM3_loadMeshes()
 			/* flags */
 			lInput = wm3get32(WM3_vHandle);
 			WM3_setMeshFlags(entMesh, lInput);
+
+			c_setminmax(entMesh);
+			
 //effect_load(entMesh->material, "showNormal.fxo");
 			
 		}
@@ -491,6 +494,8 @@ var WM3_loadObjects()
 			/* flags */
 			lInput = wm3get32(WM3_vHandle);
 			WM3_setObjectFlags(entObj, lInput);
+
+			c_setminmax(entObj);
 		}
 		
 	}
@@ -528,6 +533,7 @@ void WM3_setMeshFlags(ENTITY* entMesh, long lFlags)
 
 	/* meshes need polygonal collision detection */
 	entMesh->flags |= POLYGON;	
+	entMesh->eflags |= CLIP1;
 }
 
 void WM3_setObjectFlags(ENTITY* entObj, long lFlags)
@@ -651,11 +657,12 @@ void WM3_setPath(STRING* strPathFile)
 
 void WM3_resetDynamic()
 {
-	var i;
+	long i;
 
 	for (i = 0; i < WM3_lNumMesh; i++)
 	{
 		WM3_entMeshList[i]->emask &= ~DYNAMIC;
+		c_setminmax(WM3_entMeshList[i]);	
 	}
 	
 	for (i = 0; i < WM3_lNumObject; i++)
@@ -665,7 +672,6 @@ void WM3_resetDynamic()
 }
 
 #ifdef WM3_DEBUG
-
 void WM3_index_startup()
 {
 	ENTITY* entLast = NULL;
@@ -678,7 +684,7 @@ void WM3_index_startup()
 	{
 		if (entLast && entLast != mouse_ent)
 		{
-			reset(entLast, TRANSLUCENT);
+			reset(entLast, LIGHT);
 			entLast = NULL;
 		}
 
@@ -704,11 +710,9 @@ void WM3_index_startup()
 				}
 			}
 			entLast = mouse_ent;
-			set(mouse_ent, TRANSLUCENT);
+			set(mouse_ent, LIGHT);
+			vec_set(&mouse_ent->blue, vector(0,0,128));
 		}
-		
-//		DEBUG_VAR(mouse_pos.x, 30);
-//		DEBUG_VAR(mouse_pos.y, 50);
 		wait (1);
 	}
 }
