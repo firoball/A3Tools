@@ -7,7 +7,7 @@
 #define SYSMSG_vBufferSize 50
 #define LIST_ARRAY_STEPS   200
 
-#define PRAGMA_PATH "..\\shared\\toolbox"
+#define PRAGMA_PATH "..\\shared\\toolbox\\tags\\181215"
 #define PRAGMA_PATH "..\\shared"
 #define PRAGMA_PATH "shared"
 

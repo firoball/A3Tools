@@ -217,6 +217,11 @@ void make_things(STRING* strTgtPath)
 			lFlags |= A3_INVISIBLE; /* written to file */
 		}
 
+		if (psThing[i].psThing->lFlags & A3_SCRIPTING)
+		{
+			lFlags |= A3_SCRIPTING; /* written to file */
+		}
+
 		psRegion = psThing[i].psRegion->psRegion;
 		entLevel->ambient = psThing[i].psThing->psTex->vAmbient + psRegion->vAmbient;
 		entLevel->albedo = psThing[i].psThing->psTex->vAlbedo;

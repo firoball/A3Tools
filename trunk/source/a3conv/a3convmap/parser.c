@@ -440,6 +440,19 @@ void parse_tex(STRING* strData, var vIdx)
 			}
 		}
 
+		/* check for script attachment */
+		if (parse_attrib(strTemp, strData, "TOUCH"))
+			sTexData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_TOUCH"))
+			sTexData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_RELEASE"))
+			sTexData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_CLICK"))
+			sTexData[vIdx].lFlags |= A3_SCRIPTING;
+
 		sTexData[vIdx].strId = strId;
 		sTexData[vIdx].vRelevant = 0;	
 		sTexData[vIdx].vInternalId = -1;
@@ -522,6 +535,22 @@ void parse_wall(STRING* strData, var vIdx)
 				}
 			}
 		}
+
+		/* check for script attachment */
+		if (parse_attrib(strTemp, strData, "IF_NEAR"))
+			sWallData[vIdx].lFlags |= A3_SCRIPTING;
+
+		if (parse_attrib(strTemp, strData, "IF_FAR"))
+			sWallData[vIdx].lFlags |= A3_SCRIPTING;
+
+		if (parse_attrib(strTemp, strData, "IF_HIT"))
+			sWallData[vIdx].lFlags |= A3_SCRIPTING;
+
+		if (parse_attrib(strTemp, strData, "EACH_TICK"))
+			sWallData[vIdx].lFlags |= A3_SCRIPTING;
+
+		if (parse_attrib(strTemp, strData, "EACH_SEC"))
+			sWallData[vIdx].lFlags |= A3_SCRIPTING;
 
 		/* check for BMAP reference - currently only first BMAP is used */
 		sWallData[vIdx].psTex = NULL;
@@ -627,6 +656,27 @@ void parse_region(STRING* strData, var vIdx)
 			}		
 		}
 		
+		/* check for script attachment */
+		if (parse_attrib(strTemp, strData, "IF_ENTER"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_LEAVE"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_DIVE"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_ARISE"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "EACH_TICK"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "EACH_SEC"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "EACH_CYCLE"))
+			sRegionData[vIdx].lFlags |= A3_SCRIPTING;
 
 		/* check for texture offsets */
 		sRegionData[vIdx].vFloorOffsetX = 0;
@@ -753,6 +803,28 @@ void parse_thing(STRING* strData, var vIdx)
 			}		
 		}
 
+		/* check for script attachment */
+		if (parse_attrib(strTemp, strData, "IF_NEAR"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_FAR"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_ARRIVED"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "IF_HIT"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "EACH_CYCLE"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "EACH_TICK"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		if (parse_attrib(strTemp, strData, "EACH_SEC"))
+			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
 		/* check for TEXTURE references */
 		sThingData[vIdx].psTex = NULL;
 		if (parse_attrib(strTemp, strData, "TEXTURE"))

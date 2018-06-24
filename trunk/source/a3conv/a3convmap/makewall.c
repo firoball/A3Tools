@@ -499,11 +499,13 @@ void make_buildSingleWall(REGIONMESH* psData, WMPWALL* psWall, WMPREGION* psOwnR
 	{	
 		/* walls with special flag need to be rendered separately.
 		 * use secondary buffer for this.
+		 * render any wall with attached WDL script separately as well.
 		 */
 		if (
 			   (psWall->psWall->psTex->lFlags & A3_DIAPHANOUS)
 			|| (psWall->psWall->psTex->lFlags & A3_GHOST)
 			|| (psWall->psWall->lFlags & A3_TRANSPARENT)
+			|| (psWall->psWall->lFlags & A3_SCRIPTING)
 			)
 		{
 			psData = regbuf_getSecondaryBuffer();
@@ -522,6 +524,7 @@ void make_buildSingleWall(REGIONMESH* psData, WMPWALL* psWall, WMPREGION* psOwnR
 			   (psWall->psWall->psTex->lFlags & A3_DIAPHANOUS)
 			|| (psWall->psWall->psTex->lFlags & A3_GHOST)
 			|| (psWall->psWall->lFlags & A3_TRANSPARENT)
+			|| (psWall->psWall->lFlags & A3_SCRIPTING)
 			)
 		{
 			regbuf_finish(psData);
@@ -907,6 +910,12 @@ long make_getWallFlags(WALLDATA* psWall)
 	{
 		lFlags |= A3_PASSABLE;
 	}
+	/* wall has script attached */
+	if ((psWall->lFlags & A3_SCRIPTING))
+	{
+		lFlags |= A3_SCRIPTING;
+	}
+	
 	
 	return lFlags;
 }

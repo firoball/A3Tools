@@ -13,8 +13,11 @@ ENTITY** WM3_entObjectList;
 var WM3_vNumBmap;
 var WM3_vNumModel;
 var WM3_vNumTex;
-var WM3_vNumMesh;
-var WM3_vNumObject;
+long WM3_lNumMesh;
+long WM3_lNumObject;
+
+#define HAS_SCRIPT FLAG8
+#define WM3_DEBUG
 
 void WM3_load(STRING* strTemp)
 {
@@ -91,7 +94,6 @@ var WM3_loadBitmaps()
 	var vFail = 0;
 	STRING* strFile = str_create("");
 	long lInput;
-	long lNumBmap;
 	long i;
 	
 	/* bitmap identifier */
@@ -104,14 +106,14 @@ var WM3_loadBitmaps()
 	else
 	{
 		/* number of bitmaps */
-		lNumBmap = wm3get32(WM3_vHandle);
+		WM3_vNumBmap = wm3get32(WM3_vHandle);
 		
 		/* allocate bitmap list */
-		if (lNumBmap > 0)
-			WM3_bmapBmapList = (BMAP**)sys_malloc(sizeof(BMAP*) * lNumBmap);
+		if (WM3_vNumBmap > 0)
+			WM3_bmapBmapList = (BMAP**)sys_malloc(sizeof(BMAP*) * WM3_vNumBmap);
 		
 		/* read all bitmaps */
-		for (i = 0; i < lNumBmap; i++)
+		for (i = 0; i < WM3_vNumBmap; i++)
 		{
 			file_str_read(WM3_vHandle, strFile); /* read null terminated string */
 			//error(strFile);
@@ -140,7 +142,6 @@ var WM3_loadModels()
 	var vFail = 0;
 	STRING* strFile = str_create("");
 	long lInput;
-	long lNumModel;
 	long i;
 	
 	/* model identifier */
@@ -153,14 +154,14 @@ var WM3_loadModels()
 	else
 	{
 		/* number of models */
-		lNumModel = wm3get32(WM3_vHandle);
+		WM3_vNumModel = wm3get32(WM3_vHandle);
 		
 		/* allocate model list */
-		if (lNumModel > 0)
-			WM3_strModelList = (STRING**)sys_malloc(sizeof(STRING*) * lNumModel);
+		if (WM3_vNumModel > 0)
+			WM3_strModelList = (STRING**)sys_malloc(sizeof(STRING*) * WM3_vNumModel);
 
 		/* read all models */
-		for (i = 0; i < lNumModel; i++)
+		for (i = 0; i < WM3_vNumModel; i++)
 		{
 			file_str_read(WM3_vHandle, strFile); /* read null terminated string */
 			//error(strFile);
@@ -175,7 +176,6 @@ var WM3_loadTextures()
 {
 	var vFail = 0;
 	long lInput;
-	long lNumTex;
 	long i, j;
 	
 	/* texture identifier */
@@ -188,13 +188,13 @@ var WM3_loadTextures()
 	else
 	{
 		/* number of textures */
-		lNumTex = wm3get32(WM3_vHandle);
+		WM3_vNumTex = wm3get32(WM3_vHandle);
 				
 		/* allocate texture list */
-		if (lNumTex > 0)
-			WM3_sTextureList = (WM3TEX*)sys_malloc(sizeof(WM3TEX) * lNumTex);
+		if (WM3_vNumTex > 0)
+			WM3_sTextureList = (WM3TEX*)sys_malloc(sizeof(WM3TEX) * WM3_vNumTex);
 			
-		for (i = 0; i < lNumTex; i++)
+		for (i = 0; i < WM3_vNumTex; i++)
 		{
 			/* fill WM3TEXTURE struct */
 			WM3_sTextureList[i].cType = wm3get8(WM3_vHandle);
@@ -253,7 +253,6 @@ var WM3_loadMeshes()
 	long lNumVertex;
 	long lNumTriangle;
 	short sNumTex;
-	long lNumMesh;
 	
 	D3DVERTEX* sV;
 	WORD* wIndex;
@@ -276,13 +275,13 @@ var WM3_loadMeshes()
 	else
 	{
 		/* number of meshes */
-		lNumMesh = wm3get32(WM3_vHandle);
+		WM3_lNumMesh = wm3get32(WM3_vHandle);
 		
 		/* allocate mesh list */
-		if (lNumMesh > 0)
-			WM3_entMeshList = (ENTITY**)sys_malloc(sizeof(ENTITY*) * lNumMesh);		
+		if (WM3_lNumMesh > 0)
+			WM3_entMeshList = (ENTITY**)sys_malloc(sizeof(ENTITY*) * WM3_lNumMesh);		
 		
-		for(i = 0; i < lNumMesh; i++)
+		for(i = 0; i < WM3_lNumMesh; i++)
 		{
 			/* mesh position */
 			lInput = wm3get32(WM3_vHandle);
@@ -405,7 +404,6 @@ var WM3_loadObjects()
 	var vFail = 0;
 	long lInput;
 	float fInput;
-	long lNumObj;
 	VECTOR vecPos;
 	char cType;
 	ENTITY* entObj;
@@ -424,13 +422,13 @@ var WM3_loadObjects()
 	else
 	{
 		/* number of objects */
-		lNumObj = wm3get32(WM3_vHandle);
+		WM3_lNumObject = wm3get32(WM3_vHandle);
 		
 		/* allocate object list */
-		if (lNumObj > 0)
-			WM3_entObjectList = (ENTITY**)sys_malloc(sizeof(ENTITY*) * lNumObj);		
+		if (WM3_lNumObject > 0)
+			WM3_entObjectList = (ENTITY**)sys_malloc(sizeof(ENTITY*) * WM3_lNumObject);		
 		
-		for(i = 0; i < lNumObj; i++)
+		for(i = 0; i < WM3_lNumObject; i++)
 		{
 			/* texture reference id */
 			lInput = wm3get32(WM3_vHandle);
@@ -465,6 +463,7 @@ var WM3_loadObjects()
 				entObj = ent_create(strModel, &vecPos, NULL);
 				//entObj = ent_create(SHADOW_DDS, &vecPos, NULL);
 			}
+			WM3_entObjectList[i] = entObj;
 
 			/* angle (pan only) */
 			lInput = wm3get32(WM3_vHandle);
@@ -522,6 +521,11 @@ void WM3_setMeshFlags(ENTITY* entMesh, long lFlags)
 		entMesh->flags |= INVISIBLE;
 	}	
 
+	if (lFlags & A3_SCRIPTING)
+	{
+		entMesh->flags |= HAS_SCRIPT;
+	}
+
 	/* meshes need polygonal collision detection */
 	entMesh->flags |= POLYGON;	
 }
@@ -544,6 +548,11 @@ void WM3_setObjectFlags(ENTITY* entObj, long lFlags)
 		entObj->flags |= INVISIBLE;
 	}	
 
+	if (lFlags & A3_SCRIPTING)
+	{
+		entObj->flags |= HAS_SCRIPT;
+	}
+
 	/* black pixels are always invisible for objects */
 	entObj->flags |= OVERLAY;	
 }
@@ -555,20 +564,21 @@ void WM3_unload()
 	
 	/* IMPORTANT: remove everything in reversed order */
 	
+//error(str_for_num(NULL,WM3_lNumObject));
 	/* object data */
-	for (i = 0; i < WM3_vNumObject; i++)
+	for (i = 0; i < WM3_lNumObject; i++)
 	{
 		/* remove skin from entity (deleted seperately) */
-		ent_setskin(WM3_entObjectList[i], NULL, 1);
+		//ent_setskin(WM3_entObjectList[i], NULL, 1);
 	
 		/* remove entity */
 		ptr_remove(WM3_entObjectList[i]);
 	}
 	sys_free(WM3_entObjectList);
 
-	
+//error(str_for_num(NULL,WM3_lNumMesh));
 	/* mesh data */
-	for (i = 0; i < WM3_vNumMesh; i++)
+	for (i = 0; i < WM3_lNumMesh; i++)
 	{
 		/* remove mesh from entity (deleted seperately) */
 		psMesh = ent_getmesh(WM3_entMeshList[i], 0, 0);
@@ -576,15 +586,15 @@ void WM3_unload()
 		ent_setmesh(WM3_entMeshList[i], NULL, 0, 0);
 	
 		/* remove skins from entity (deleted seperately) */
-		for (j = 0; j < ent_status(WM3_entMeshList[i], 8); i++)
-			ent_setskin(WM3_entMeshList[i], NULL, j+1);
+//		for (j = 0; j < ent_status(WM3_entMeshList[i], 8); i++)
+//			ent_setskin(WM3_entMeshList[i], NULL, j+1);
 	
 		/* remove entity */
 		ptr_remove(WM3_entMeshList[i]);
 	}
 	sys_free(WM3_entMeshList);
 
-
+//error(str_for_num(NULL,WM3_vNumTex));
 	/* texture data */
 	for (i = 0; i < WM3_vNumTex; i++)
 	{
@@ -596,6 +606,7 @@ void WM3_unload()
 	sys_free(WM3_sTextureList);
 
 
+//error(str_for_num(NULL,WM3_vNumModel));
 	/* model data */
 	for (i = 0; i < WM3_vNumModel; i++)
 	{
@@ -604,6 +615,7 @@ void WM3_unload()
 	sys_free(WM3_strModelList);
 
 
+//error(str_for_num(NULL,WM3_vNumBmap));
 	/* bitmap data */
 	for (i = 0; i < WM3_vNumBmap; i++)
 	{
@@ -641,13 +653,63 @@ void WM3_resetDynamic()
 {
 	var i;
 
-	for (i = 0; i < WM3_vNumMesh; i++)
+	for (i = 0; i < WM3_lNumMesh; i++)
 	{
 		WM3_entMeshList[i]->emask &= ~DYNAMIC;
 	}
 	
-	for (i = 0; i < WM3_vNumObject; i++)
+	for (i = 0; i < WM3_lNumObject; i++)
 	{
 		WM3_entObjectList[i]->emask &= ~DYNAMIC;
 	}
 }
+
+#ifdef WM3_DEBUG
+
+void WM3_index_startup()
+{
+	ENTITY* entLast = NULL;
+	long i;
+
+	mouse_mode = 4;
+	wait(-1);
+
+	while(key_esc == 0)
+	{
+		if (entLast && entLast != mouse_ent)
+		{
+			reset(entLast, TRANSLUCENT);
+			entLast = NULL;
+		}
+
+		if (mouse_ent)
+		{
+			for (i = 0; i < WM3_lNumMesh; i++)
+			{
+				if (mouse_ent == WM3_entMeshList[i])
+				{
+					draw_text("Mesh",10,180,COLOR_RED);
+					DEBUG_VAR(i, 200);
+					DEBUG_VAR((is(WM3_entMeshList[i], HAS_SCRIPT) != 0), 220);
+				}
+			}
+	
+			for (i = 0; i < WM3_lNumObject; i++)
+			{
+				if (mouse_ent == WM3_entObjectList[i])
+				{
+					draw_text("Object",10,180,COLOR_RED);
+					DEBUG_VAR(i, 200);
+					DEBUG_VAR((is(WM3_entObjectList[i], HAS_SCRIPT) != 0), 220);
+				}
+			}
+			entLast = mouse_ent;
+			set(mouse_ent, TRANSLUCENT);
+		}
+		
+//		DEBUG_VAR(mouse_pos.x, 30);
+//		DEBUG_VAR(mouse_pos.y, 50);
+		wait (1);
+	}
+}
+#endif

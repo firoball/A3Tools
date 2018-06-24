@@ -37,7 +37,7 @@
 #define SYSMSG_vBufferSize 50
 
 /* files shared with WM3 loader */
-#define PRAGMA_PATH "..\\shared\\toolbox"
+#define PRAGMA_PATH "..\\shared\\toolbox\\tags\\181215"
 #define PRAGMA_PATH "..\\shared\\a3sky"
 #define PRAGMA_PATH "..\\shared"
 

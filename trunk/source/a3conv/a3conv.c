@@ -36,7 +36,7 @@
 
 #define SYSMSG_vBufferSize 50
 
-#define PRAGMA_PATH "..\\shared\\toolbox"
+#define PRAGMA_PATH "..\\shared\\toolbox\\tags\\181215"
 #define PRAGMA_PATH "..\\shared"
 #define PRAGMA_PATH "shared"
 #define PRAGMA_PATH "a3conv"

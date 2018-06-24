@@ -236,7 +236,7 @@ void make_regions()
 							regbuf_finish(psData);
 							if (vExportWm3 != 0)
 							{
-								WM3_saveMesh(psData, psRegion->vAmbient, 0);
+								WM3_saveMesh(psData, psRegion->vAmbient, (psRegion->lFlags & A3_SCRIPTING));
 							}
 
 							/* create entity from meshdata */

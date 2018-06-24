@@ -76,7 +76,8 @@
 #define A3_GROUND				0x00100000
 #define A3_CANDELABER		0x00200000
 
-
+/* custom flags */
+#define A3_SCRIPTING			0x80000000
 
 #define CEILING 1
 #define FLOOR 0
