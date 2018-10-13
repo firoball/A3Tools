@@ -61,6 +61,7 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 	STRING* strParseMsg = str_create("");
 	//STRING* strPalette;
 	STRING* strScaledFile;
+	STRING* strSlicedFile;
 
 	#ifdef SYSMSG_ACTIVE
 	SYSMSG_print(SYSMSG_SYSTEM, "copy bitmaps started...");
@@ -113,11 +114,22 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 			#endif
 
 			/* convert lbm and bbm files to bmp */
-			if(psBmap->vConvert)
+			if(psBmap->vConvert == 1 || psBmap->vConvert == 1)
 			{
 				lbm2bmp(strSrcPath, strTgtPath, strFile);
 			}
-			/* copy bmp and pcx files */
+			/* convert pcx files to bmp */
+			else if (psBmap->vConvert == 3)
+			{
+				str_cpy (strPathFileIn, strSrcPath);
+				str_cat (strPathFileIn, strFile);
+				str_cpy (strPathFileOut, strTgtPath);
+				str_cat (strPathFileOut, strFile);
+				str_replace(strPathFileOut, ".pcx", ".bmp");
+				BMAP* bmapPcx = bmap_create(strPathFileIn);
+				bmap_copyfromPCX(bmapPcx, strPathFileOut);
+			}
+			/* copy bmp files */
 			else
 			{
 				str_cpy (strPathFileIn, strSrcPath);
@@ -159,6 +171,7 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 				psBmap->vOrigHeight = 1;
 			}
 
+			/* sprites must not be rescaled - extra check required */
 			if (psBmap->vSkin == SKIN)
 			{
 				/* resize bitmaps if necessary - they need to be power of two in width and height */
@@ -171,7 +184,6 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 				while((psBmap->vHeight > vSquared) && (vSquared < 2048)) 
 					vSquared *= 2;
 				vNewHeight = vSquared;
-	
 				/* check if rescaling of bitmap is necessary */
 				if(psBmap->vWidth != vNewWidth || psBmap->vHeight != vNewHeight)
 				{
@@ -193,6 +205,30 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 					SYSMSG_print(SYSMSG_SYSTEM, strParseMsg);
 					#endif
 				}
+				/* no rescaling required - only slice bitmap */
+				else if (bmap_isslice(psBmap))
+				{
+					strSlicedFile = bmap_slice(psBmap, strTgtPath);
+					str_cpy(psBmap->strName, strSlicedFile);
+					ptr_remove(strSlicedFile);
+		
+					#ifdef SYSMSG_ACTIVE
+					str_printf(strParseMsg, "%s sliced", psBmap->strId->chars);
+					SYSMSG_print(SYSMSG_SYSTEM, strParseMsg);
+					#endif
+				}
+			}
+			/* do slicing also for sprites */
+			else if (bmap_isslice(psBmap))
+			{
+				strSlicedFile = bmap_slice(psBmap, strTgtPath);
+				str_cpy(psBmap->strName, strSlicedFile);
+				ptr_remove(strSlicedFile);
+	
+				#ifdef SYSMSG_ACTIVE
+				str_printf(strParseMsg, "%s sliced", psBmap->strId->chars);
+				SYSMSG_print(SYSMSG_SYSTEM, strParseMsg);
+				#endif
 			}
 			bmap_to_mipmap(psBmap->bmapTex); 
 		}
@@ -206,6 +242,49 @@ void bmap_copy(STRING* strSrcPath, STRING* strTgtPath)
 	#ifdef SYSMSG_ACTIVE
 	SYSMSG_print(SYSMSG_SYSTEM, "copy bitmaps done.\r\n");
 	#endif
+}
+
+void bmap_copyfromPCX(BMAP* bmapTex, STRING* strTgtPath)
+{
+	STRING* strPathFile;
+	long i;
+	var vPixel;
+	var vFormat;
+	COLOR colPixel;
+	BMPDATA* psBmp;
+	var vX, vY;
+	var vWidth, vHeight;
+	long lSize;
+		
+	strPathFile = str_create(strTgtPath);
+
+	vWidth = bmap_width(bmapTex);
+	vHeight = bmap_height(bmapTex);
+	
+	/* Now save a palettized .bmp 
+	 * since a 24 bit 888 Bitmap was scaled, it is necessary to
+	 * save it in true color instead of palettized 8 bit
+	 */
+	psBmp = BMP_create(vWidth, vHeight, 24);
+	/* save image data */
+
+	vFormat = bmap_lock(bmapTex, 0);
+	lSize = vWidth * vHeight; /* auto cast */
+
+	for (i = 0; i < lSize; i++)
+	{
+		vX = i % vWidth;
+		vY = integer(i / vWidth);
+		vPixel = pixel_for_bmap(bmapTex, vX, vY);
+		pixel_to_vec(&colPixel, NULL, vFormat, vPixel);
+		BMP_setImg(psBmp, &colPixel, i);
+	}
+	BMP_write(strPathFile, psBmp);
+	bmap_unlock(bmapTex);
+	BMP_remove(psBmp);
+
+	/* cleanup */
+	ptr_remove(strPathFile);
 }
 
 STRING* bmap_scale(BMAPDATA* psBmap, var vNewWidth, var vNewHeight, STRING* strTgtPath)
@@ -278,6 +357,85 @@ STRING* bmap_scale(BMAPDATA* psBmap, var vNewWidth, var vNewHeight, STRING* strT
 	ptr_remove(strTemp);
 
 	return strFile;
+}
+
+STRING* bmap_slice(BMAPDATA* psBmap, STRING* strTgtPath)
+{
+	STRING* strFile;
+	STRING* strPathFile;
+	STRING* strTemp;
+	long i;
+	var vPixel;
+	var vFormat;
+	COLOR colPixel;
+	BMPDATA* psBmp;
+	long lColor;
+	var vX, vY;
+	long lSize;
+		
+	strFile = str_create("");
+
+	/* scaling has to be done in a more complex way as it sounds
+	 * There are several steps do be done.
+	 */
+
+	/* Generate target file name: "<orig name><pos x><pos y><size x><size y>.bmp" */
+	strPathFile = str_create(strTgtPath);
+	str_cpy(strFile, psBmap->strName);
+
+	str_replace(strFile, ".bmp", "");
+	str_replace(strFile, ".pcx", "");
+	str_replace(strFile, ".lbm", "");
+	str_replace(strFile, ".bbm", "");
+	str_replaceall(strFile, "#", "");
+	str_cat(strFile, ".bmp");
+	str_cat(strPathFile, strFile);
+
+	/* Now save a palettized .bmp 
+	 * since a 24 bit 888 Bitmap was scaled, it is necessary to
+	 * save it in true color instead of palettized 8 bit
+	 */
+	psBmp = BMP_create(psBmap->vWidth, psBmap->vHeight, 24);
+	/* save image data */
+	vFormat = bmap_lock(psBmap->bmapTex, 0);
+	lSize = psBmap->vWidth * psBmap->vHeight; /* auto cast */
+	for (i = 0; i < lSize; i++)
+	{
+		vX = i % psBmap->vWidth;
+		vY = integer(i / psBmap->vWidth);
+		vPixel = pixel_for_bmap(psBmap->bmapTex, vX, vY);
+		pixel_to_vec(&colPixel, NULL, vFormat, vPixel);
+		BMP_setImg(psBmp, &colPixel, i);
+	}
+	BMP_write(strPathFile, psBmp);
+	bmap_unlock(psBmap->bmapTex);
+	BMP_remove(psBmp);
+
+	/* cleanup */
+	//ptr_remove(strFile); // must be removed in calling function!!
+	ptr_remove(strPathFile);
+
+	return strFile;
+}
+
+var bmap_isslice(BMAPDATA* psBmap)
+{
+	STRING* strName;
+	STRING* strFileName;
+	var vResult;
+	
+	strName = str_create("");
+	str_cpy(strName, psBmap->strName);
+	str_trunc(strName, 4);
+	strFileName = str_create("");
+	str_cpy(strName, psBmap->strName);
+	str_trunc(strName, 4);
+	vResult = !str_cmpi(strName, strFileName);
+
+	ptr_remove(strName);
+	ptr_remove(strFileName);
+	
+	return vResult;
 }
 
 void model_copy(STRING* strSrcPath, STRING* strTgtPath)

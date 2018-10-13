@@ -262,14 +262,17 @@ void parse_bmap(STRING* strData, var vIdx)
 		if (l)
 			str_trunc(strFileName, str_len(strFileName)- l + 1);
 
-		if (str_stri(strName, ".lbm"))	/* lbm/bbm files need to be converted to bmp */
+		if (str_stri(strName, ".lbm"))	/* lbm/bbm/pcx files need to be converted to bmp */
 			sBmapData[vIdx].vConvert = 1;
 		else if (str_stri(strName, ".bbm"))
 			sBmapData[vIdx].vConvert = 2;
+		else if (str_stri(strName, ".pcx"))
+			sBmapData[vIdx].vConvert = 3;
 		else
 			sBmapData[vIdx].vConvert = 0;
 		str_replace(strName, ".lbm", ".bmp");
 		str_replace(strName, ".bbm", ".bmp");
+		str_replace(strName, ".pcx", ".bmp");
 		
 		/* the texture pointer as well as width and height are filled later
 		 * when relevance chek is performed. Thsi is done to keep computing
@@ -755,6 +758,12 @@ void parse_thing(STRING* strData, var vIdx)
 	STRING* strTemp = str_create("");
 	STRING* strAttrib = str_create("");
 	
+	var vActor;
+	if (str_stri(strData, "ACTOR") == 1)
+		vActor = 1;
+	else
+		vActor = 0;
+	
 	if (vIdx < getNumThing())
 	{
 		str_clip(strData, 6); /* remove thing/actor identifier */
@@ -824,6 +833,10 @@ void parse_thing(STRING* strData, var vIdx)
 		
 		if (parse_attrib(strTemp, strData, "EACH_SEC"))
 			sThingData[vIdx].lFlags |= A3_SCRIPTING;
+		
+		/* add flag for actors */
+		if (vActor == 1)
+			sThingData[vIdx].lFlags |= A3_ACTOR;
 		
 		/* check for TEXTURE references */
 		sThingData[vIdx].psTex = NULL;

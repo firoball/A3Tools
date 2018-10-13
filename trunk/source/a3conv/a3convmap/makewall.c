@@ -776,10 +776,10 @@ void make_copyWallMesh(REGIONMESH* psData, WMPWALL* psWall, var* vUVBuf, var vVe
 
 	vPixelX = psTex->psBmap->vOrigWidth;
 	vScaleX = psTex->vScaleX / vPixelX;
-		
+
 	vPixelY = psTex->psBmap->vOrigHeight;
 	vScaleY = psTex->vScaleY / vPixelY;
-	
+
 	if (psWall->psWall->vOffsetX == 0) /* only use WED X offset when no explicit offset was defined in script */
 		vOffsetX = psWall->vOffsetX % vPixelX;	/* offset from WED - always positive */
 	else

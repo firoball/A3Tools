@@ -43,7 +43,10 @@ void copy_files(STRING* strSrcPath, STRING* strTgtPath);
 
 
 void bmap_copy(STRING* strSrcPath, STRING* strTgtPath);
+void bmap_copyfromPCX(BMAP* bmapTex, STRING* strTgtPath);
 STRING* bmap_scale(BMAPDATA* psBmap, var vNewWidth, var vNewHeight, STRING* strTgtPath);
+STRING* bmap_slice(BMAPDATA* psBmap, STRING* strTgtPath);
+var bmap_isslice(BMAPDATA* psBmap);
 void model_copy(STRING* strSrcPath, STRING* strTgtPath);
 
 #include "filecopy.c"

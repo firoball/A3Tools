@@ -46,6 +46,7 @@ void BMP_write(STRING* strFile, BMPDATA* psBmp)
 	long lPaddedWidth;
 	long lRow, lCol;
 	long i, l;
+	long lPadding;
 
 	/* bmp info / header size */
 	lOffset = lInfoSize + lHeaderSize;
@@ -65,11 +66,12 @@ void BMP_write(STRING* strFile, BMPDATA* psBmp)
 	/* image data */
 	/* BMPs get aligned to a width multiple of 4 */
 	/* nonmatching sizes need to be padded       */
-	if (psBmp->lWidth % 4)
-		lPaddedWidth = (4 - (psBmp->lWidth % 4)) + psBmp->lWidth;
+	if ((psBmp->lWidth * (lBits / 8)) % 4)
+		lPadding = 4 - ((psBmp->lWidth * (lBits / 8)) % 4);
 	else
-		lPaddedWidth = psBmp->lWidth;
-		
+		lPadding = 0;
+	
+	lPaddedWidth = (psBmp->lWidth * (lBits / 8)) + lPadding;
 	lSize = lOffset + (lPaddedWidth * psBmp->lHeight * (lBits / 8));
 	/* image size (padded)*/
 	lImgSizePadded = lPaddedWidth * psBmp->lHeight * (lBits / 8);
@@ -119,7 +121,7 @@ void BMP_write(STRING* strFile, BMPDATA* psBmp)
 				l++;
 				if(l >= psBmp->lWidth)
 				{
-					for(l = 0; l < lPaddedWidth - psBmp->lWidth; l++)
+					for(l = 0; l < lPadding; l++)
 						bmpput8(vHandle, 0);
 					l = 0;
 				}
@@ -142,10 +144,8 @@ void BMP_write(STRING* strFile, BMPDATA* psBmp)
 				l++;
 				if(l >= psBmp->lWidth)
 				{
-					for(l = 0; l < lPaddedWidth - psBmp->lWidth; l++)
+					for(l = 0; l < lPadding; l++)
 					{
-						bmpput8(vHandle, 0);
-						bmpput8(vHandle, 0);
 						bmpput8(vHandle, 0);
 					}
 					l = 0;
