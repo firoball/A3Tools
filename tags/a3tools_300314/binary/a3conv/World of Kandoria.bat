@@ -1,1 +1,0 @@
-a3conv -cfg wok.ini
