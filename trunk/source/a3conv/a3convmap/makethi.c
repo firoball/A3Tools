@@ -213,8 +213,14 @@ void make_things(STRING* strTgtPath)
 		
 		if (psThing[i].psThing->lFlags & A3_INVISIBLE)
 		{
-			entLevel->flags |= INVISIBLE;
-			lFlags |= A3_INVISIBLE; /* written to file */
+			entLevel->flags |= INVISIBLE | PASSABLE;
+			lFlags |= A3_INVISIBLE | A3_PASSABLE; /* written to file */
+		}
+
+		if (psThing[i].psThing->lFlags & A3_PASSABLE)
+		{
+			entLevel->flags |= PASSABLE;
+			lFlags |= A3_PASSABLE; /* written to file */
 		}
 
 		if (psThing[i].psThing->lFlags & A3_SCRIPTING)
